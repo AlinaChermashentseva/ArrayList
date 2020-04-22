@@ -1,0 +1,6 @@
+C:\Users\cherm\source\repos\ClassLibraryArr\ClassLibraryArr\bin\Debug\ClassLibraryArr.dll
+C:\Users\cherm\source\repos\ClassLibraryArr\ClassLibraryArr\bin\Debug\ClassLibraryArr.pdb
+C:\Users\cherm\source\repos\ClassLibraryArr\ClassLibraryArr\obj\Debug\ClassLibraryArr.csproj.CoreCompileInputs.cache
+C:\Users\cherm\source\repos\ClassLibraryArr\ClassLibraryArr\obj\Debug\ClassLibraryArr.dll
+C:\Users\cherm\source\repos\ClassLibraryArr\ClassLibraryArr\obj\Debug\ClassLibraryArr.pdb
+C:\Users\cherm\source\repos\ClassLibraryArr\ClassLibraryArr\obj\Debug\ClassLibraryArr.csprojAssemblyReference.cache
