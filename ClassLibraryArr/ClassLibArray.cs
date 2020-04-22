@@ -2,7 +2,7 @@
 
 namespace ClassLibraryArr
 {
-    public class ArrayList<T>
+    public class ArrayList<T>: IList<T>
     {
         private struct Element
         {
@@ -21,7 +21,7 @@ namespace ClassLibraryArr
             Console.WriteLine();
         }
 
-        public T[] AddUpdate()
+        private T[] AddUpdate()
         {
             if (arrList.Length == 100)
                 throw new ExceptionList("Достигнута максимальная длина списка");
@@ -37,7 +37,7 @@ namespace ClassLibraryArr
             List[arrList.Length - 1].info = newElement;
         }
 
-        public T[] RemoveUpdate()
+        private T[] RemoveUpdate()
         {
             T[] updateArr = new T[arrList.Length - 1];
             for (int i = 0; i < arrList.Length - 1; i++)
@@ -112,16 +112,11 @@ namespace ClassLibraryArr
             return UpdateList;
         }
 
-        public T ValueOf(int index) // Нахождние номера элемента по введенному значению
+        public T ValueOf(int index) // Нахождние номера элемента по введенному номеру
         {
             if (index < arrList.Length)
                 return List[index].info;
             throw new ExceptionList("Такого элемента в списке нет");
-        }
-
-        public int ListLength()
-        {
-            return arrList.Length;
         }
 
         public ArrayList(T[] arr)
@@ -135,6 +130,20 @@ namespace ClassLibraryArr
 
         public ArrayList()
         { }
+    }
+
+    public interface IList<T>
+    {
+        void ShowList();
+        void Add(T newElement);
+        void RemoveAt(int index);
+        void Remove(T newElement);
+        void Clear();
+        void Insert(T newElement, int index);
+        bool Contains(T newElement);
+        int IndexOf(T newElement);
+        ArrayList<T> SubList(int fromIndex, int toIndex);
+        T ValueOf(int index);
     }
 
     public class ExceptionList : Exception //Класс для описания пользовательского типа ошибок
