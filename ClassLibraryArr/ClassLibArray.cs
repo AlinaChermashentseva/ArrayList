@@ -2,91 +2,85 @@
 
 namespace ClassLibraryArr
 {
-    public class ArrayList<T>: IList<T>
+    public class ArrayList<T> : IList<T>
     {
-        private struct Element
-        {
-            public T info;
-        }
         T[] arrList = Array.Empty<T>();
-        private readonly Element[] List = new Element[100]; // Массив элементов для списка
+        int NumberOfElements;
 
-        public void ShowList() // Вывод списка на экран      
+        public override string ToString()// Вывод списка на экран
         {
-            Console.WriteLine("Получившийся список: ");
-            for (int i = 0; i < arrList.Length; i++)
+            string showlist = "List: ";
+            for (int i = 0; i < NumberOfElements; i++)
             {
-                Console.Write(List[i].info + " ");
+                showlist += arrList[i] + " ";
             }
-            Console.WriteLine();
+            showlist += "\n";
+            return showlist;
         }
 
-        private T[] AddUpdate()
+        private T[] UpdateList() //Обновляем массив (увеличиваем на 100)
         {
-            if (arrList.Length == 100)
-                throw new ExceptionList("Достигнута максимальная длина списка");
-            T[] updateArr = new T[arrList.Length + 1];
-            for (int i = 0; i < arrList.Length; i++)
-                updateArr[i] = arrList[i];
+            T[] updateArr = new T[arrList.Length + 100];
+            Array.Copy(arrList, updateArr, arrList.Length);
             return updateArr;
         }
 
         public void Add(T newElement) // Добавление элемента
         {
-            arrList = AddUpdate();
-            List[arrList.Length - 1].info = newElement;
-        }
-
-        private T[] RemoveUpdate()
-        {
-            T[] updateArr = new T[arrList.Length - 1];
-            for (int i = 0; i < arrList.Length - 1; i++)
-                updateArr[i] = arrList[i];
-            return updateArr;
+            if (NumberOfElements == arrList.Length) 
+                arrList = UpdateList();
+            arrList[NumberOfElements] = newElement;
+            NumberOfElements += 1;
         }
 
         public void RemoveAt(int index) // Удаление элемента по его номеру
         {
             if (arrList.Length < 1)
-                throw new ExceptionList("Список пуст");
-            List[index].info = default;
-            for (int i = index; i < arrList.Length; i++)
-                List[i].info = List[i + 1].info;
-            arrList = RemoveUpdate();
+                throw new EmptyList("Список пуст");
+            if (index > NumberOfElements || index < 0) 
+                throw new NoIndexException("Такого индекса нет");
+            arrList[index] = default;
+            for (int i = index; i < arrList.Length - 1; i++)
+                arrList[i] = arrList[i + 1];
+            NumberOfElements -= 1;
         }
 
         public void Remove(T newElement) // Удаление элемента по его значению
         {
             if (arrList.Length < 1)
-                throw new ExceptionList("Список пуст");
+                throw new EmptyList("Список пуст");
             int index = IndexOf(newElement);
-            List[index].info = default;
-            for (int i = index; i < arrList.Length; i++)
-                List[i].info = List[i + 1].info;
-            arrList = RemoveUpdate();
+            arrList[index] = default;
+            for (int i = index; i < arrList.Length - 1; i++)
+                arrList[i] = arrList[i + 1];
+            NumberOfElements -= 1;
         }
 
         public void Clear() //очистить массив
         {
-            for (int i = 0; i < arrList.Length; i++)
+            for (int i = 0; i < NumberOfElements; i++)
             {
-                List[i].info = default;
+                arrList[i] = default;
             }
         }
 
         public void Insert(T newElement, int index) // Вставка элемента
         {
-            arrList = AddUpdate();
-            for (int i = arrList.Length; i > index; i--)
-                List[i].info = List[i - 1].info;
-            List[index].info = newElement;
+            if (index > NumberOfElements - 1 || index < 0)
+                throw new NoIndexException("Такого индекса нет");
+            if (NumberOfElements == arrList.Length)
+                arrList = UpdateList();
+            NumberOfElements += 1;
+            for (int i = NumberOfElements - 1; i > index; i--)
+                arrList[i] = arrList[i - 1];
+            arrList[index] = newElement;
         }
 
         public bool Contains(T newElement) // Проверяет содержится ли элемент в списке
         {
-            for (int i = 0; i < arrList.Length; i++)
+            for (int i = 0; i < NumberOfElements; i++)
             {
-                if (List[i].info.Equals(newElement) == true)
+                if (arrList[i].Equals(newElement))
                     return true;
             }
             return false;
@@ -94,29 +88,40 @@ namespace ClassLibraryArr
 
         public int IndexOf(T newElement) // Нахождние номера элемента по введенному значению
         {
-            for (int i = 0; i < arrList.Length; i++)
+            for (int i = 0; i < NumberOfElements; i++)
             {
-                if (List[i].info.Equals(newElement) == true)
+                if (arrList[i].Equals(newElement))
                     return i;
             }
-            throw new ExceptionList("Такого элемента в списке нет");
+            return -1;
         }
 
-        public ArrayList<T> SubList(int fromIndex, int toIndex)
+        public IList<T> SubList(int fromIndex, int toIndex) //Создание нового списка от элемента до элемента
         {
-            if (arrList.Length < toIndex || fromIndex < 0)
-                throw new ExceptionList("Такого индекса нет");
+
+            if (NumberOfElements < toIndex || fromIndex < 0 || toIndex < 0 || fromIndex > NumberOfElements)
+                throw new NoElementException("Такого индекса нет");
             ArrayList<T> UpdateList = new ArrayList<T>();
             for (int i = fromIndex; i <= toIndex; i++)
-                UpdateList.Add(List[i].info);
+                UpdateList.Add(arrList[i]);
             return UpdateList;
         }
 
-        public T ValueOf(int index) // Нахождние номера элемента по введенному номеру
+        public T this[int index] // Нахождние номера элемента по введенному номеру 
         {
-            if (index < arrList.Length)
-                return List[index].info;
-            throw new ExceptionList("Такого элемента в списке нет");
+            get
+            {
+                return arrList[index];
+            }
+            set
+            {
+                arrList[index] = value;
+            }
+        }
+
+        public int Length()
+        {
+            return NumberOfElements;
         }
 
         public ArrayList(T[] arr)
@@ -124,17 +129,41 @@ namespace ClassLibraryArr
             arrList = arr;
             for (int i = 0; i < arr.Length; i++)
             {
-                List[i].info = arr[i];
+                arrList[i] = arr[i];
             }
+            NumberOfElements = arr.Length;
         }
 
         public ArrayList()
         { }
+
+        public override bool Equals(object obj)
+        {
+            ArrayList<T> expectedList = (ArrayList<T>)obj;
+            if (obj.GetType() != GetType()) return false;
+            bool result = true;
+            for (int i = 0; i < expectedList.Length(); i++)
+            {
+                if (expectedList[i].Equals(this[i]))
+                    result = true;
+                else
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        public override int GetHashCode()
+        {
+            return GetHashCode();
+        }
     }
 
     public interface IList<T>
     {
-        void ShowList();
+        string ToString();
         void Add(T newElement);
         void RemoveAt(int index);
         void Remove(T newElement);
@@ -142,13 +171,32 @@ namespace ClassLibraryArr
         void Insert(T newElement, int index);
         bool Contains(T newElement);
         int IndexOf(T newElement);
-        ArrayList<T> SubList(int fromIndex, int toIndex);
-        T ValueOf(int index);
+        IList<T> SubList(int fromIndex, int toIndex);
+        T this[int index] { get; set; }
+        int Length();
     }
 
-    public class ExceptionList : Exception //Класс для описания пользовательского типа ошибок
+    public class ExceptionList : Exception
     {
-        public ExceptionList(string Message) : base(Message) //Вызываем конструктор базового класса
+        public ExceptionList(string Message) : base(Message)
+        { }
+    }
+
+    public class NoElementException : ExceptionList
+    {
+        public NoElementException(string Message) : base(Message)
+        { }
+    }
+
+    public class NoIndexException : ExceptionList
+    {
+        public NoIndexException(string Message) : base(Message)
+        { }
+    }
+
+    public class EmptyList : ExceptionList
+    {
+        public EmptyList(string Message) : base(Message)
         { }
     }
 }
