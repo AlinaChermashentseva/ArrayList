@@ -326,5 +326,37 @@ namespace UnitTestProjectArr
             ArrayList<double> actualList = new ArrayList<double>(actual);
             Console.WriteLine(actualList.ToString());
         }
+
+        [TestMethod]
+        public void TestEmptyListException()
+        {
+            ArrayList<int> actualList = new ArrayList<int>();
+            actualList.Remove(5);
+            Console.WriteLine(actualList.ToString());
+        }
+
+        [TestMethod]
+        public void TestNoIndexException()
+        {
+            int[] actual = new int[3] { 1, 2, 3 };
+            ArrayList<int> actualList = new ArrayList<int>(actual);
+            actualList.SubList(0, 5);
+            Console.WriteLine(actualList.ToString());
+        }
+
+         [TestMethod]
+         public void TestHash()
+         {
+             ArrayList<int> arr = new ArrayList<int>();
+             Console.WriteLine(arr.GetHashCode());
+         }
+
+        [TestMethod]
+        public void TestNullString() 
+        {
+            ArrayList<string> arr = new ArrayList<string>();
+            arr.Add(null);
+            Console.WriteLine(arr.ToString());
+        }
     }
 }

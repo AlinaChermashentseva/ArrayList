@@ -1,21 +1,22 @@
 ﻿using System;
+using System.Text;
 
 namespace ClassLibraryArr
 {
     public class ArrayList<T> : IList<T>
     {
         T[] arrList = Array.Empty<T>();
-        int NumberOfElements;
+        int numberOfElements;
 
-        public override string ToString()// Вывод списка на экран
+        public override string ToString() // Вывод списка на экран
         {
-            string showlist = "List: ";
-            for (int i = 0; i < NumberOfElements; i++)
+            StringBuilder showlist = new StringBuilder("List: ");
+            for (int i = 0; i < numberOfElements; i++)
             {
-                showlist += arrList[i] + " ";
+                showlist.Append (" {arrList[i]}");
             }
-            showlist += "\n";
-            return showlist;
+            showlist.Append("\n");
+            return showlist.ToString();
         }
 
         private T[] UpdateList() //Обновляем массив (увеличиваем на 100)
@@ -27,22 +28,24 @@ namespace ClassLibraryArr
 
         public void Add(T newElement) // Добавление элемента
         {
-            if (NumberOfElements == arrList.Length) 
+            if (numberOfElements == arrList.Length) 
                 arrList = UpdateList();
-            arrList[NumberOfElements] = newElement;
-            NumberOfElements += 1;
+            if(newElement!=null)
+                arrList[numberOfElements] = newElement;
+            else throw new NullElement("Нельзя добавить значение null");
+            numberOfElements += 1;
         }
 
         public void RemoveAt(int index) // Удаление элемента по его номеру
         {
             if (arrList.Length < 1)
                 throw new EmptyList("Список пуст");
-            if (index > NumberOfElements || index < 0) 
+            if (index > numberOfElements || index < 0) 
                 throw new NoIndexException("Такого индекса нет");
             arrList[index] = default;
             for (int i = index; i < arrList.Length - 1; i++)
                 arrList[i] = arrList[i + 1];
-            NumberOfElements -= 1;
+            numberOfElements -= 1;
         }
 
         public void Remove(T newElement) // Удаление элемента по его значению
@@ -53,12 +56,12 @@ namespace ClassLibraryArr
             arrList[index] = default;
             for (int i = index; i < arrList.Length - 1; i++)
                 arrList[i] = arrList[i + 1];
-            NumberOfElements -= 1;
+            numberOfElements -= 1;
         }
 
         public void Clear() //очистить массив
         {
-            for (int i = 0; i < NumberOfElements; i++)
+            for (int i = 0; i < numberOfElements; i++)
             {
                 arrList[i] = default;
             }
@@ -66,19 +69,19 @@ namespace ClassLibraryArr
 
         public void Insert(T newElement, int index) // Вставка элемента
         {
-            if (index > NumberOfElements - 1 || index < 0)
+            if (index > numberOfElements - 1 || index < 0)
                 throw new NoIndexException("Такого индекса нет");
-            if (NumberOfElements == arrList.Length)
+            if (numberOfElements == arrList.Length)
                 arrList = UpdateList();
-            NumberOfElements += 1;
-            for (int i = NumberOfElements - 1; i > index; i--)
+            numberOfElements += 1;
+            for (int i = numberOfElements - 1; i > index; i--)
                 arrList[i] = arrList[i - 1];
             arrList[index] = newElement;
         }
 
         public bool Contains(T newElement) // Проверяет содержится ли элемент в списке
         {
-            for (int i = 0; i < NumberOfElements; i++)
+            for (int i = 0; i < numberOfElements; i++)
             {
                 if (arrList[i].Equals(newElement))
                     return true;
@@ -88,7 +91,7 @@ namespace ClassLibraryArr
 
         public int IndexOf(T newElement) // Нахождние номера элемента по введенному значению
         {
-            for (int i = 0; i < NumberOfElements; i++)
+            for (int i = 0; i < numberOfElements; i++)
             {
                 if (arrList[i].Equals(newElement))
                     return i;
@@ -99,9 +102,9 @@ namespace ClassLibraryArr
         public IList<T> SubList(int fromIndex, int toIndex) //Создание нового списка от элемента до элемента
         {
 
-            if (NumberOfElements < toIndex || fromIndex < 0 || toIndex < 0 || fromIndex > NumberOfElements)
-                throw new NoElementException("Такого индекса нет");
-            ArrayList<T> UpdateList = new ArrayList<T>();
+            if (numberOfElements < toIndex || fromIndex < 0 || toIndex < 0 || fromIndex > numberOfElements)
+                throw new NoIndexException("Такого индекса нет");
+            ArrayList<T> UpdateList = new ArrayList<T>(); //TODO скопировать массив
             for (int i = fromIndex; i <= toIndex; i++)
                 UpdateList.Add(arrList[i]);
             return UpdateList;
@@ -121,7 +124,7 @@ namespace ClassLibraryArr
 
         public int Length()
         {
-            return NumberOfElements;
+            return numberOfElements;
         }
 
         public ArrayList(T[] arr)
@@ -131,7 +134,7 @@ namespace ClassLibraryArr
             {
                 arrList[i] = arr[i];
             }
-            NumberOfElements = arr.Length;
+            numberOfElements = arr.Length;
         }
 
         public ArrayList()
@@ -157,7 +160,7 @@ namespace ClassLibraryArr
 
         public override int GetHashCode()
         {
-            return GetHashCode();
+            return arrList.GetHashCode();
         }
     }
 
@@ -182,12 +185,6 @@ namespace ClassLibraryArr
         { }
     }
 
-    public class NoElementException : ExceptionList
-    {
-        public NoElementException(string Message) : base(Message)
-        { }
-    }
-
     public class NoIndexException : ExceptionList
     {
         public NoIndexException(string Message) : base(Message)
@@ -197,6 +194,12 @@ namespace ClassLibraryArr
     public class EmptyList : ExceptionList
     {
         public EmptyList(string Message) : base(Message)
+        { }
+    }
+
+    public class NullElement : ExceptionList
+    {
+        public NullElement(string Message) : base(Message)
         { }
     }
 }
