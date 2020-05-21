@@ -32,14 +32,14 @@ namespace ClassLibraryArr
                 arrList = UpdateList();
             if(newElement!=null)
                 arrList[numberOfElements] = newElement;
-            else throw new NullElement("Нельзя добавить значение null");
+            else throw new NullElementException("Нельзя добавить значение null");
             numberOfElements += 1;
         }
 
         public void RemoveAt(int index) // Удаление элемента по его номеру
         {
             if (arrList.Length < 1)
-                throw new EmptyList("Список пуст");
+                throw new EmptyListException("Список пуст");
             if (index > numberOfElements || index < 0) 
                 throw new NoIndexException("Такого индекса нет");
             arrList[index] = default;
@@ -51,7 +51,7 @@ namespace ClassLibraryArr
         public void Remove(T newElement) // Удаление элемента по его значению
         {
             if (arrList.Length < 1)
-                throw new EmptyList("Список пуст");
+                throw new EmptyListException("Список пуст");
             int index = IndexOf(newElement);
             arrList[index] = default;
             for (int i = index; i < arrList.Length - 1; i++)
@@ -160,7 +160,12 @@ namespace ClassLibraryArr
 
         public override int GetHashCode()
         {
-            return arrList.GetHashCode();
+            int hashCode=0;
+            for (int i=0; i<numberOfElements-1;i++)
+            {
+                hashCode^=arrList[i].GetHashCode();
+            }
+            return hashCode;
         }
     }
 
@@ -191,15 +196,15 @@ namespace ClassLibraryArr
         { }
     }
 
-    public class EmptyList : ExceptionList
+    public class EmptyListException : ExceptionList
     {
-        public EmptyList(string Message) : base(Message)
+        public EmptyListException(string Message) : base(Message)
         { }
     }
 
-    public class NullElement : ExceptionList
+    public class NullElementException : ExceptionList
     {
-        public NullElement(string Message) : base(Message)
+        public NullElementException(string Message) : base(Message)
         { }
     }
 }

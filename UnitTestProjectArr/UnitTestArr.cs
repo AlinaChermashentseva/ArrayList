@@ -331,8 +331,7 @@ namespace UnitTestProjectArr
         public void TestEmptyListException()
         {
             ArrayList<int> actualList = new ArrayList<int>();
-            actualList.Remove(5);
-            Console.WriteLine(actualList.ToString());
+            Assert.ThrowsException<EmptyListException>(() => actualList.Remove(5));
         }
 
         [TestMethod]
@@ -340,23 +339,24 @@ namespace UnitTestProjectArr
         {
             int[] actual = new int[3] { 1, 2, 3 };
             ArrayList<int> actualList = new ArrayList<int>(actual);
-            actualList.SubList(0, 5);
-            Console.WriteLine(actualList.ToString());
+            Assert.ThrowsException<NoIndexException>(()=>actualList.SubList(0, 5));
         }
 
          [TestMethod]
          public void TestHash()
          {
-             ArrayList<int> arr = new ArrayList<int>();
-             Console.WriteLine(arr.GetHashCode());
+            int[] actual = new int[3] { 1, 2, 3 };
+            ArrayList<int> actualList = new ArrayList<int>(actual);
+            int[] actual2 = new int[3] { 1, 2, 3 };
+            ArrayList<int> actualList2 = new ArrayList<int>(actual2);
+            Assert.AreEqual(actualList.GetHashCode(), actualList2.GetHashCode());
          }
 
         [TestMethod]
         public void TestNullString() 
         {
             ArrayList<string> arr = new ArrayList<string>();
-            arr.Add(null);
-            Console.WriteLine(arr.ToString());
+            Assert.ThrowsException<NullElementException>(() => arr.Add(null));
         }
     }
 }
